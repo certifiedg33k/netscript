@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# created by cwgueco April 21, 2015
+# updated by cwgueco April 21, 2015
 import paramiko
 import sys, getopt, time, re
 
