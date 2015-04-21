@@ -1,56 +1,29 @@
 #!/usr/bin/env python
-# created by cwgueco April 21, 2015
+
 import paramiko
 import sys, getopt, time, re
 
-
-def command_wait(command, wait_time, should_print):
-    if 'quit' in command:
-        if should_print:
-            print "Sleeping in "+str(wait_time)+" seconds"
-        time.sleep(wait_time)
-    if 'return' in command:
-        if should_print:
-            print "Sleeping in "+str(wait_time)+" seconds"
-        time.sleep(wait_time)    
-    if 'end' in command:
-        if should_print:
-            print "Sleeping in "+str(wait_time)+" seconds"
-        time.sleep(wait_time)
-    if 'exit' in command:
-        if should_print:
-            print "Sleeping in "+str(wait_time)+" seconds"
-        time.sleep(wait_time)
-    if 'save' in command:
-        if should_print:
-            print "Sleeping in "+str(wait_time)+" seconds"
-        time.sleep(wait_time)
-    if 'write' in command:
-        if should_print:
-            print "Sleeping in "+str(wait_time)+" seconds"
-        time.sleep(wait_time)
-        
 def send_string_and_wait(command, wait_time, should_print):
-    if should_print:
-        print "Command: "+command.strip()
     shell.send(command)
-    command_wait(command, wait_time, should_print)
+    time.sleep(wait_time)
+    receive_buffer = shell.recv(1024)
+    if should_print:
+        print receive_buffer
 
 def process_comments(string, should_print):
     if should_print:
-        print "Comments: "+string.strip()
+        print "Comments: "+string
 
 def process_actions(string, should_print):
     actions = mysplit(string)
+    
     if should_print:
-        print "Actions: "+string.strip()
-
+        print "Actions: "+string
     if 'wait' in string:
         wait_time = int(actions[1])
         if should_print:
             print "Waiting: "+str(wait_time)
         time.sleep(wait_time)
-
 def mysplit(string):
     words = []
     inword = 0
@@ -63,7 +36,6 @@ def mysplit(string):
         else:
             words[-1] = words[-1] + c
     return words
-
 def getarg(argv):
     global target
     global username
@@ -80,12 +52,12 @@ def getarg(argv):
     try:
         opts, args = getopt.getopt(argv,"t:u:p:i:v",["target=","username=","password=","ifile=","verbose"])
     except getopt.GetoptError:
-        print 'netscript.py -t <target> -u <username> -p <password> -i <command_file> -v'
+        print 'netscript.py -t <target> -u <username> -p <password> -i <cmd> -v'
         sys.exit(2)
       
     for opt, arg in opts:
         if opt == '-h':
-            print 'netscript.py -t <target> -u <username> -p <password> -i <command_file> -v'
+            print 'test.py -t <target> -u <username> -p <password> -i <cmd>'
             sys.exit()
         elif opt in ("-t", "--target"):
             target = arg
@@ -124,8 +96,6 @@ if __name__ == '__main__':
 
     shell = remote_conn_pre.invoke_shell()
 
-    receive_buffer = ''
-
     with open(cmdfile) as fp:
         for line in fp:
             if re.match(r'#', line):
@@ -134,11 +104,6 @@ if __name__ == '__main__':
                 process_actions(line, verbose)
             else:
                 send_string_and_wait(line, 1, verbose)
-            
-    receive_buffer += shell.recv(5000)
-
-    if verbose:
-        print receive_buffer
 
     print "Closing SSH connection"
 
