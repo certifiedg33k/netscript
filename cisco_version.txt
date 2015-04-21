@@ -1,0 +1,2 @@
+terminal length 0
+show version

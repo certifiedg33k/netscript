@@ -31,10 +31,11 @@ def command_wait(command, wait_time, should_print):
         time.sleep(wait_time)
         
 def send_string_and_wait(command, wait_time, should_print):
-    if should_print:
-        print "Command: "+command.strip()
     shell.send(command)
-    command_wait(command, wait_time, should_print)
+    time.sleep(wait_time)
+    receive_buffer = shell.recv(1024)
+    if should_print:
+        print receive_buffer
 
 def process_comments(string, should_print):
     if should_print:
@@ -42,9 +43,9 @@ def process_comments(string, should_print):
 
 def process_actions(string, should_print):
     actions = mysplit(string)
+    
     if should_print:
-        print "Actions: "+string.strip()
-
+        print "Actions: "+string
     if 'wait' in string:
         wait_time = int(actions[1])
         if should_print:
@@ -124,8 +125,6 @@ if __name__ == '__main__':
 
     shell = remote_conn_pre.invoke_shell()
 
-    receive_buffer = ''
-
     with open(cmdfile) as fp:
         for line in fp:
             if re.match(r'#', line):
@@ -135,11 +134,6 @@ if __name__ == '__main__':
             else:
                 send_string_and_wait(line, 1, verbose)
             
-    receive_buffer += shell.recv(5000)
-
-    if verbose:
-        print receive_buffer
-
     print "Closing SSH connection"
 
     remote_conn_pre.close()
