@@ -80,7 +80,7 @@ def getarg(argv):
     try:
         opts, args = getopt.getopt(argv,"t:u:p:i:v",["target=","username=","password=","ifile=","verbose"])
     except getopt.GetoptError:
-        print 'test.py -t <target> -u <username> -p <password> -i <cmd> -v'
+        print 'netscript.py -t <target> -u <username> -p <password> -i <cmd> -v'
         sys.exit(2)
       
     for opt, arg in opts:
