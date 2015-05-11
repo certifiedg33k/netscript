@@ -1,0 +1,7 @@
+# Enable interface 
+configure terminal
+     interface Fa1/0/34
+     shutdown
+     !wait 5 
+     no shutdown
+end

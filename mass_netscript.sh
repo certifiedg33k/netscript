@@ -1,7 +1,7 @@
 #!/bin/bash
 netscript="./netscript.py"
 username="netscript"
-passwd="N3Tscr16t"
+passwd="xxxxxxx"
 
 if [ -z "$1" ]
   then
