@@ -1,5 +1,5 @@
 #!/bin/bash
-netscript="/opt/scripts/netscript.py"
+netscript="./netscript.py"
 username="netscript"
 passwd="N3Tscr16t"
 

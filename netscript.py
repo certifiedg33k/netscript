@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-# updated by cwgueco April 21, 2015
+# modified April 21, 2015 - cwgueco
+# modified May 11, 2015 - cwgueco
 import paramiko
 import sys, getopt, time, re
 
@@ -71,12 +72,14 @@ def getarg(argv):
     global password
     global cmdfile
     global verbose
-    
+    global wait    
+
     target = ''
     username = ''
     password = ''
     cmdfile = ''
     verbose = False
+    wait = 5
 
     try:
         opts, args = getopt.getopt(argv,"t:u:p:i:v",["target=","username=","password=","ifile=","verbose"])
@@ -106,6 +109,7 @@ def getarg(argv):
         print 'Password     :', password
         print 'Command file :', cmdfile
         print 'Verbose      :', verbose
+        print 'Global wait  :', wait,'seconds'
         print "-----------------------"
 
 if __name__ == '__main__':
@@ -127,6 +131,7 @@ if __name__ == '__main__':
 
     with open(cmdfile) as fp:
         for line in fp:
+            line = line.strip()
             if re.match(r'#', line):
                 process_comments(line, verbose)
             elif re.match(r'!', line):
