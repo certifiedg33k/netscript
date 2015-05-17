@@ -1,37 +1,11 @@
 #!/usr/bin/env python
 # modified April 21, 2015 - cwgueco
 # modified May 11, 2015 - cwgueco
-# modified May 15, 2015 - cwgueco
+# modified May 15, 2015 - fixed newline output in verbose mode - cwgueco
+# modified May 17, 2015 - added more comments - cwgueco
 import paramiko
 import sys, getopt, time, re
 
-
-def command_wait(command, wait_time, should_print):
-    if 'quit' in command:
-        if should_print:
-            print "Sleeping in "+str(wait_time)+" seconds"
-        time.sleep(wait_time)
-    if 'return' in command:
-        if should_print:
-            print "Sleeping in "+str(wait_time)+" seconds"
-        time.sleep(wait_time)    
-    if 'end' in command:
-        if should_print:
-            print "Sleeping in "+str(wait_time)+" seconds"
-        time.sleep(wait_time)
-    if 'exit' in command:
-        if should_print:
-            print "Sleeping in "+str(wait_time)+" seconds"
-        time.sleep(wait_time)
-    if 'save' in command:
-        if should_print:
-            print "Sleeping in "+str(wait_time)+" seconds"
-        time.sleep(wait_time)
-    if 'write' in command:
-        if should_print:
-            print "Sleeping in "+str(wait_time)+" seconds"
-        time.sleep(wait_time)
-        
 def send_string_and_wait(command, wait_time, should_print):
     shell.send(command+'\n')
     response = shell.recv(9999)
@@ -132,30 +106,38 @@ if __name__ == '__main__':
     # Get the command-line arguments
     getarg(sys.argv[1:])
 
-    # Create instance of SSHClient object
+    # Create the SSHClient object
     remote_conn_pre = paramiko.SSHClient()
 
-    # Automatically add untrusted hosts (make sure okay for security policy in your environment)
+    # Automatically add untrusted hosts (be careful with this unless you trust your network) 
     remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-    # initiate SSH connection
+    # Initiate SSH connection
     remote_conn_pre.connect(target, username=username, password=password)
     print "SSH connection established to %s" % target
 
+    # Invoke interactive SSH shel
     shell = remote_conn_pre.invoke_shell()
 
+    # Looping the command file and executing them in the shell 
     with open(cmdfile) as fp:
         for line in fp:
             line = line.strip()
+
+            # Processing comments which starts with #'
             if re.match(r'#', line):
                 process_comments(line, verbose)
+
+            # Processing actions which start with '!' (so far 'wait' is allowed)
             elif re.match(r'!', line):
                 process_actions(line, verbose)
+
+            # Processing commands to the device
             else:
                 send_string_and_wait(line, interval, verbose)
             
+    # Closing SSH connection
     print "\nSSH connection closed from %s" % target
-
     remote_conn_pre.close()
 
     quit()
