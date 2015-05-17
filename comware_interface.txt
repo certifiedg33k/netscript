@@ -1,0 +1,5 @@
+system-view
+interface g1/0/1
+description "test"
+return
+quit

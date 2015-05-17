@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # modified April 21, 2015 - cwgueco
 # modified May 11, 2015 - cwgueco
+# modified May 15, 2015 - cwgueco
 import paramiko
 import sys, getopt, time, re
 
@@ -32,11 +33,12 @@ def command_wait(command, wait_time, should_print):
         time.sleep(wait_time)
         
 def send_string_and_wait(command, wait_time, should_print):
-    shell.send(command)
+    shell.send(command+'\n')
+    response = shell.recv(9999)
     time.sleep(wait_time)
-    receive_buffer = shell.recv(1024)
     if should_print:
-        print receive_buffer
+       sys.stdout.write(response)
+       sys.stdout.flush()
 
 def process_comments(string, should_print):
     if should_print:
@@ -44,13 +46,23 @@ def process_comments(string, should_print):
 
 def process_actions(string, should_print):
     actions = mysplit(string)
-    
+
+    response = shell.recv(9999)
     if should_print:
-        print "Actions: "+string
+       sys.stdout.write(response)
+       sys.stdout.flush()
+
+    if should_print:
+        print "\nActions: "+string
     if 'wait' in string:
-        wait_time = int(actions[1])
+        shell.send('\n')
+	if len(actions) > 1:
+            wait_time = int(actions[1])
+        else:
+	    wait_time = wait
         if should_print:
-            print "Waiting: "+str(wait_time)
+            sys.stdout.write("Waiting: "+str(wait_time)+" seconds")
+            sys.stdout.flush()
         time.sleep(wait_time)
 
 def mysplit(string):
@@ -73,6 +85,7 @@ def getarg(argv):
     global cmdfile
     global verbose
     global wait    
+    global interval
 
     target = ''
     username = ''
@@ -80,6 +93,7 @@ def getarg(argv):
     cmdfile = ''
     verbose = False
     wait = 5
+    interval = .2 
 
     try:
         opts, args = getopt.getopt(argv,"t:u:p:i:v",["target=","username=","password=","ifile=","verbose"])
@@ -110,6 +124,7 @@ def getarg(argv):
         print 'Command file :', cmdfile
         print 'Verbose      :', verbose
         print 'Global wait  :', wait,'seconds'
+	print 'Interval     :', interval,'seconds' 
         print "-----------------------"
 
 if __name__ == '__main__':
@@ -137,9 +152,9 @@ if __name__ == '__main__':
             elif re.match(r'!', line):
                 process_actions(line, verbose)
             else:
-                send_string_and_wait(line, 1, verbose)
+                send_string_and_wait(line, interval, verbose)
             
-    print "Closing SSH connection"
+    print "\nSSH connection closed from %s" % target
 
     remote_conn_pre.close()
 
