@@ -1,6 +1,0 @@
-system
-undo info-center loghost 10.64.221.13 
-undo info-center loghost 10.64.221.21 
-return
-save force
-quit
