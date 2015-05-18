@@ -3,6 +3,7 @@
 # modified May 11, 2015 - cwgueco
 # modified May 15, 2015 - fixed newline output in verbose mode - cwgueco
 # modified May 17, 2015 - added more comments - cwgueco
+# modified May 18, 2015 - Update arguments - cwgueco 
 import paramiko
 import sys, getopt, time, re
 
@@ -69,15 +70,19 @@ def getarg(argv):
     wait = 5
     interval = .2 
 
+    if len(sys.argv) == 1:
+        print 'netscript.py -t <target> -u <username> -p <password> -c <command_file> -v'
+        sys.exit()
+
     try:
-        opts, args = getopt.getopt(argv,"t:u:p:i:v",["target=","username=","password=","ifile=","verbose"])
+        opts, args = getopt.getopt(argv,"t:u:p:c:v",["target=","username=","password=","commandfile=","verbose"])
     except getopt.GetoptError:
-        print 'netscript.py -t <target> -u <username> -p <password> -i <command_file> -v'
+        print 'netscript.py -t <target> -u <username> -p <password> -c <command_file> -v'
         sys.exit(2)
       
     for opt, arg in opts:
         if opt == '-h':
-            print 'netscript.py -t <target> -u <username> -p <password> -i <command_file> -v'
+            print 'netscript.py -t <target> -u <username> -p <password> -c <command_file> -v'
             sys.exit()
         elif opt in ("-t", "--target"):
             target = arg
@@ -85,7 +90,7 @@ def getarg(argv):
             username = arg
         elif opt in ("-p", "--password"):
             password = arg
-        elif opt in ("-i", "--ifile"):
+        elif opt in ("-c", "--commandfile"):
             cmdfile = arg
         elif opt in ("-v", "--verbose"):
             verbose = True    
