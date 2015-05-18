@@ -1,3 +1,0 @@
-nami-bldg2-agg-sw-5500
-nso-dmz-switch1-5800
-pju-ancmarina-wan-rtr-3020
