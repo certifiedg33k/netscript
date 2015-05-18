@@ -5,8 +5,8 @@ This is a Python/Paramiko script that I used to automate configuration task on n
 This script assumed you have an username with administrative privilege. It is tested working with Cisco IOS and HP Comware network devices with SSH.
 
 Usage:
-  ./netscript.py 
-  netscript.py -t <target> -u <username> -p <password> -c <command_file> -v
+> ./netscript.py 
+> netscript.py -t <target> -u <username> -p <password> -c <command_file> -v
 
 -t target IP address / hostname
 -u username
